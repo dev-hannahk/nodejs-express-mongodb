@@ -1,4 +1,8 @@
 extends base
 
 block content 
-    h1 Watch Video
+    h3 #{video.views} #{video.views === 1 ? "view" : "views"}
+    //- 상대경로
+    a(href=`${video.id}/edit`) Edit Video &rarr;
+    //- 절대경로
+    //- a(href="/edit") Edit Video &rarr;
