@@ -2,7 +2,7 @@ import Video from "../models/Video";
 
 export const home = async (req, res) => {
   try {
-    const videos = await Video.find({});
+    const videos = await Video.find({}).sort({ createdAt: "desc" });
     return res.render("home", { pageTitle: "Home", videos });
   } catch (error) {
     return res.render("server-error");
@@ -45,11 +45,7 @@ export const postEdit = async (req, res) => {
     await Video.findByIdAndUpdate(id, {
       title,
       description,
-      hashtags: hashtags
-        .split(",")
-        .map((hashtag) =>
-          hashtag.startsWith("#") ? ` ${hashtag}` : `#${hashtag}`
-        ),
+      hashtags: Video.formatHashtags(hashtags),
     });
     // video.title = title;
     // video.description = description;
@@ -74,7 +70,7 @@ export const postUpload = async (req, res) => {
     await Video.create({
       title,
       description,
-      hashtags,
+      hashtags: Video.formatHashtags(hashtags),
     });
   } catch (error) {
     return res.render("upload", {
@@ -82,7 +78,6 @@ export const postUpload = async (req, res) => {
       errorMessage: error._message,
     });
   }
-
   // await Video.save() is also possilbe to save documents.
   // 'create' method is easy way to save documents.
   // 'create' method triggers 'save' method which is next middleware.
@@ -90,4 +85,27 @@ export const postUpload = async (req, res) => {
   // why collection name is videos.
   // cause mongoose automaticaally finds model and create collection taking model's name with lowercase and adding 's' to the end.
   return res.redirect("/");
+};
+
+export const deleteVideo = async (req, res) => {
+  const { id } = req.params; // parameter
+  await Video.findByIdAndDelete(id);
+  // findByIdAndDelete(id) === findOneAndDelete({ _id: id })
+  return res.redirect("/");
+};
+
+export const search = async (req, res) => {
+  const { keyword } = req.query;
+  console.log(req.query);
+  let videos = [];
+  if (keyword) {
+    videos = await Video.find({
+      // title: keyword,
+      title: {
+        $regex: new RegExp(keyword, "i"), // i <- ignore upper and lower cases
+        // $gt:3 (greater than)
+      },
+    });
+  }
+  return res.render("search", { pageTitle: "Search", videos });
 };

@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  deleteVideo,
   getEdit,
   getUpload,
   postEdit,
@@ -20,6 +21,7 @@ viedoRouter.get("/:id([0-9a-f]{24})", watch);
 // viedoRouter.get("/:id(\\d+)/edit", getEdit);
 // viedoRouter.post("/:id(\\d+)/edit", postEdit);
 viedoRouter.route("/:id([0-9a-f]{24})/edit").get(getEdit).post(postEdit);
+viedoRouter.route("/:id([0-9a-f]{24})/delete").get(deleteVideo);
 viedoRouter.route("/upload").get(getUpload).post(postUpload);
 
 export default viedoRouter;
