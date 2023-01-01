@@ -1,7 +1,9 @@
 extends base
 
 block content 
-    h3 #{video.views} #{video.views === 1 ? "view" : "views"}
+    div 
+        p=video.description
+        small=video.createdAt
     //- 상대경로
     a(href=`${video.id}/edit`) Edit Video &rarr;
     //- 절대경로
