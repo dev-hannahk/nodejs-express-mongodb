@@ -1,8 +1,10 @@
 import express from "express";
 import morgan from "morgan";
-import globalRouter from "./routers/globalRouter";
+import session from "express-session";
+import rootRouter from "./routers/rootRouter";
 import userRouter from "./routers/userRouter";
 import viedoRouter from "./routers/videoRouter";
+import { localsMiddleware } from "./middlewares";
 
 const app = express();
 
@@ -18,7 +20,30 @@ app.use(logger);
 // application/x-www-form-urlencoded 파싱 (form data 파싱)
 // https://expressjs.com/ko/api.html#express.urlencoded
 app.use(express.urlencoded({ extended: true }));
-app.use("/", globalRouter);
+
+// server is giving browser a session id
+app.use(
+  session({
+    secret: "Hello!",
+    resave: true,
+    saveUninitialized: true,
+  })
+);
+
+// app.use((req, res, next) => {
+//  // can see all users session state
+//   req.sessionStore.all((error, sessions) => {
+//     console.log(sessions);
+//     next();
+//   });
+// });
+
+// app.get("/add-one", (req, res, next) => {
+//   return res.send(`${req.session.id}`);
+// });
+
+app.use(localsMiddleware);
+app.use("/", rootRouter);
 app.use("/users", userRouter);
 app.use("/videos", viedoRouter);
 
