@@ -1,6 +1,7 @@
 import express from "express";
 import morgan from "morgan";
 import session from "express-session";
+import MongoStore from "connect-mongo";
 import rootRouter from "./routers/rootRouter";
 import userRouter from "./routers/userRouter";
 import viedoRouter from "./routers/videoRouter";
@@ -25,8 +26,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use(
   session({
     secret: "Hello!",
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
+    // everytime server restarts memory is deleted
+    // cookie is only saved on sessionId.
+    // session data is saved on server side.
+    // memory store is not designed production env.
+    // Compatible Session Stores : https://www.npmjs.com/package/express-session#compatible-session-stores
+    // connet-mongo : seesion stores for express, mongodb in ts.
+    store: MongoStore.create({ mongoUrl: "mongodb://127.0.0.1:27017/wetube" }),
   })
 );
 
