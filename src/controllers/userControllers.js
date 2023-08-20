@@ -1,8 +1,7 @@
 import User from "../models/User";
-import bcrpyt from "bcrypt";
+import bcrypt from "bcrypt";
 
-export const getJoin = async (req, res) =>
-  res.render("join", { pageTitle: "Create Account" });
+export const getJoin = (req, res) => res.render("join", { pageTitle: "Join" });
 
 export const postJoin = async (req, res) => {
   const pageTitle = "Join";
@@ -35,7 +34,7 @@ export const postJoin = async (req, res) => {
 };
 export const getLogin = (req, res) => {
   const pageTitle = "Login";
-  return res.render("Login", { pageTitle });
+  return res.render("login", { pageTitle });
 };
 
 export const postLogin = async (req, res) => {
@@ -50,7 +49,7 @@ export const postLogin = async (req, res) => {
     });
   }
   // check if password correct
-  const match = await bcrpyt.compare(password, user.password);
+  const match = await bcrypt.compare(password, user.password);
   if (!match) {
     return res.status(400).render("login", {
       pageTitle,
